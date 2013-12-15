@@ -10,4 +10,5 @@ Add the following to your `.env` file.
 TOMTELIZER_DEBUG=false
 TOMTELIZER_UPLOAD_DIR=files
 TOMTELIZER_SANTA_HAT=assets/santa-hat.png
+TOMTELIZER_BASE_URL=http://0.0.0.0:8088
 ```
