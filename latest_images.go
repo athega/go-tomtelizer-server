@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"net/http"
@@ -13,54 +14,51 @@ import (
 func handleLatestImages(w http.ResponseWriter, r *http.Request) {
 	contentType(w, "application/xml; charset=utf-8")
 
-	fmt.Fprintln(w, latestImagesXML())
+	fmt.Fprintln(w, marshalXML(latestImages()))
 }
 
-func marshalXML(images []*Image) string {
-	i := Images{Type: "array", Image: images}
+func handleLatestImagesJSON(w http.ResponseWriter, r *http.Request) {
+	contentType(w, "application/json; charset=utf-8")
 
-	out, err := xml.MarshalIndent(i, "", "  ")
-
-	if err != nil {
-		puts("error: %v\n", err)
-	}
-
-	return xml.Header + string(out)
+	fmt.Fprintln(w, marshalJSON(latestImages()))
 }
 
-func latestImagesXML() string {
-	images := handleFileStats(func(f os.FileInfo, id int) *Image {
+func imageURL(fn string) string {
+	return BASE_URL + "/uploaded_images/" + fn
+}
+
+func latestImages() Images {
+	images := handleFileStats(func(f os.FileInfo) *Image {
+		idStr := strings.TrimRight(f.Name(), ".jpg")
 		return &Image{
-			Id:        atoi(strings.TrimRight(f.Name(), ".jpg")),
+			Id:        atoi(idStr),
 			Filename:  f.Name(),
 			CreatedAt: f.ModTime(),
+			UpdatedAt: f.ModTime(),
 			Size:      f.Size(),
-			Checksum:  "foo"}
+			URL:       imageURL(f.Name())}
 	})
 
-	return marshalXML(images)
+	return Images{Type: "array", Image: images}
 }
 
 type Image struct {
-	XMLName     xml.Name  `xml:"image"`
-	Id          int       `xml:"id"`
-	Filename    string    `xml:"filename"`
-	Orientation int       `xml:"orientation"`
-	CreatedAt   time.Time `xml:"created-at"`
-	UpdatedAt   time.Time `xml:"updated-at"`
-	Width       int       `xml:"width"`
-	Height      int       `xml:"height"`
-	Size        int64     `xml:"hatified-file-size"`
-	Checksum    string    `xml:"hatified-file-checksum"`
+	XMLName   xml.Name  `xml:"image" json:"-"`
+	Id        int       `xml:"id" json:"id"`
+	Filename  string    `xml:"filename" json:"filename"`
+	CreatedAt time.Time `xml:"created-at" json:"created_at"`
+	UpdatedAt time.Time `xml:"updated-at" json:"updated_at"`
+	Size      int64     `xml:"hatified-file-size"`
+	URL       string    `xml:"url"`
 }
 
 type Images struct {
-	XMLName xml.Name `xml:"images"`
-	Type    string   `xml:"type,attr"`
-	Image   []*Image
+	XMLName xml.Name `xml:"images" json:"-"`
+	Type    string   `xml:"type,attr" json:"-"`
+	Image   []*Image `json:"images"`
 }
 
-type fileStatsHandler func(os.FileInfo, int) *Image
+type fileStatsHandler func(os.FileInfo) *Image
 
 func handleFileStats(yield fileStatsHandler) []*Image {
 	allFileNames, _ := filepath.Glob(UPLOAD_DIR + "/*.jpg")
@@ -75,14 +73,14 @@ func handleFileStats(yield fileStatsHandler) []*Image {
 
 	i := []*Image{}
 
-	for idx, fn := range fileNames {
+	for _, fn := range fileNames {
 		f, err := os.Stat(fn)
 
 		if err != nil {
 			puts("Unable to stat", fn)
 		}
 
-		i = append(i, yield(f, idx+1))
+		i = append(i, yield(f))
 	}
 
 	return i
@@ -90,4 +88,24 @@ func handleFileStats(yield fileStatsHandler) []*Image {
 
 func contentType(w http.ResponseWriter, t string) {
 	w.Header().Set("Content-Type", t)
+}
+
+func marshalXML(images Images) string {
+	out, err := xml.MarshalIndent(images, "", "  ")
+
+	if err != nil {
+		puts("error: %v\n", err)
+	}
+
+	return xml.Header + string(out)
+}
+
+func marshalJSON(images Images) string {
+	out, err := json.MarshalIndent(images, "", "  ")
+
+	if err != nil {
+		puts("error: %v\n", err)
+	}
+
+	return string(out)
 }

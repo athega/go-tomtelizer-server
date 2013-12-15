@@ -14,6 +14,7 @@ const (
 
 var (
 	UPLOAD_DIR string
+	BASE_URL   string
 	SANTA_HAT  image.Image
 	DEBUG      bool
 )
@@ -32,5 +33,6 @@ func setup() {
 	puts("DEBUG:", DEBUG)
 
 	UPLOAD_DIR = os.Getenv("TOMTELIZER_UPLOAD_DIR")
+	BASE_URL = os.Getenv("TOMTELIZER_BASE_URL")
 	SANTA_HAT = loadImage(os.Getenv("TOMTELIZER_SANTA_HAT"))
 }

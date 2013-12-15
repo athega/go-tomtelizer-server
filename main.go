@@ -7,6 +7,7 @@ func main() {
 
 	http.HandleFunc("/images/new", handleUpload)
 	http.HandleFunc("/images/latest", handleLatestImages)
+	http.HandleFunc("/images/latest.json", handleLatestImagesJSON)
 
 	http.Handle("/uploaded_images/",
 		http.StripPrefix("/uploaded_images/",
