@@ -24,8 +24,7 @@ func saveImage(img image.Image, version, timestamp string) {
 }
 
 func imageFileName(version, timestamp string) string {
-	timestamp2 := "foo"
-	return fmt.Sprintf("%s/%s-%s.jpg", UPLOAD_DIR, timestamp2, version)
+	return fmt.Sprintf("%s/%s%s.jpg", UPLOAD_DIR, version, timestamp)
 }
 
 func loadAndResizeImage(fn string, x, y int) image.Image {

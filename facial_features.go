@@ -22,28 +22,34 @@ func handleFacialFeatures(features []Feature, original image.Image, timestamp st
 	m := image.NewRGBA(original.Bounds())
 	draw.Draw(m, original.Bounds(), original, image.ZP, draw.Src)
 
-	for _, f := range features {
-		hatRect := calculateHatRect(f)
+	if len(features) > 0 {
+		puts("Found features:", len(features), features)
 
-		if DEBUG {
-			red := color.RGBA{255, 0, 0, 255}
-			green := color.RGBA{0, 255, 0, 255}
-			blue := color.RGBA{0, 0, 255, 255}
+		for _, f := range features {
+			hatRect := calculateHatRect(f)
 
-			box(m, hatRect, color.White)
+			if DEBUG {
+				red := color.RGBA{255, 0, 0, 255}
+				green := color.RGBA{0, 255, 0, 255}
+				blue := color.RGBA{0, 0, 255, 255}
 
-			square(m, f.LeftEye, 4, red)
-			square(m, f.Mouth, 4, green)
-			square(m, f.RightEye, 4, blue)
-		} else {
-			// Load the santa hat
-			santa := resizeImage(SANTA_HAT, hatRect.Size().X, hatRect.Size().Y)
-			draw.Draw(m, hatRect, santa, image.ZP, draw.Over)
+				box(m, hatRect, color.White)
+
+				square(m, f.LeftEye, 4, red)
+				square(m, f.Mouth, 4, green)
+				square(m, f.RightEye, 4, blue)
+			} else {
+				// Load the santa hat
+				santa := resizeImage(SANTA_HAT, hatRect.Size().X, hatRect.Size().Y)
+				draw.Draw(m, hatRect, santa, image.ZP, draw.Over)
+			}
 		}
+	} else {
+		puts("No features found…")
 	}
 
-	saveImage(m, "new", timestamp)
-	saveResizedImage(m, "thumb", timestamp, 0, 100)
+	saveImage(m, "hatified-", timestamp)
+	saveResizedImage(m, "thumb-", timestamp, 0, 100)
 }
 
 func calculateHatRect(f Feature) image.Rectangle {

@@ -17,7 +17,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 
 	// Get a timestamp string used in the filename
 	timestamp := timestampString()
-	path := imageFileName("original", timestamp)
+	path := imageFileName("", timestamp)
 
 	writeUploadedFile(r, path)
 	processFeatures(r, path, timestamp)
@@ -52,15 +52,10 @@ func processFeatures(r *http.Request, path, timestamp string) {
 			})
 		}
 
-		if ffc > 0 {
-			puts("Found features:", ffc, features)
-			handleFacialFeatures(features, original, timestamp)
-		} else {
-			puts("No features found :(")
-		}
+		handleFacialFeatures(features, original, timestamp)
 	} else {
-		saveImage(original, "new", timestamp)
-		saveResizedImage(original, "thumb", timestamp, 0, 100)
+		saveImage(original, "hatified-", timestamp)
+		saveResizedImage(original, "thumb-", timestamp, 0, 100)
 	}
 }
 
