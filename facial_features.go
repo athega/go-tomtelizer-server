@@ -13,7 +13,9 @@ type Feature struct {
 	Mouth    image.Point
 }
 
-func handleFacialFeatures(features []Feature, original image.Image, timestamp string) {
+func handleFacialFeatures(features []Feature,
+	original image.Image, timestamp string) image.Image {
+
 	w := original.Bounds().Max.X
 	h := original.Bounds().Max.Y
 
@@ -48,8 +50,7 @@ func handleFacialFeatures(features []Feature, original image.Image, timestamp st
 		puts("No features found…")
 	}
 
-	saveImage(m, "hatified-", timestamp)
-	saveResizedImage(m, "thumb-", timestamp, 0, 100)
+	return m
 }
 
 func calculateHatRect(f Feature) image.Rectangle {

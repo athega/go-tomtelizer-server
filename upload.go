@@ -24,6 +24,8 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 }
 
 func processFeatures(r *http.Request, path, timestamp string) {
+	var preparedImage image.Image
+
 	original := loadImage(path)
 
 	// Check if we should process the features
@@ -52,11 +54,13 @@ func processFeatures(r *http.Request, path, timestamp string) {
 			})
 		}
 
-		handleFacialFeatures(features, original, timestamp)
+		preparedImage = handleFacialFeatures(features, original, timestamp)
 	} else {
-		saveImage(original, "hatified-", timestamp)
-		saveResizedImage(original, "thumb-", timestamp, 0, 100)
+		preparedImage = original
 	}
+
+	saveImage(preparedImage, "hatified-", timestamp)
+	saveResizedImage(preparedImage, "thumb-", timestamp, 0, 200)
 }
 
 func writeUploadedFile(r *http.Request, image_path string) {
