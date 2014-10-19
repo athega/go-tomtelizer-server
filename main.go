@@ -18,6 +18,7 @@ func main() {
 
 	port := getenv("PORT", "8080")
 
+	puts("Listening on http://0.0.0.0:" + port)
 	fatal(http.ListenAndServe(":"+port, nil))
 }
 
