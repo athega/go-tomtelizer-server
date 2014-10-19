@@ -24,14 +24,14 @@ func handleLatestImagesJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func imageURL(fn string) string {
-	return BASE_URL + "/uploaded_images/" + fn
+	return BaseURL + "/uploaded_images/" + fn
 }
 
 func latestImages() Images {
 	images := handleFileStats(func(f os.FileInfo) *Image {
 		idStr := strings.TrimRight(f.Name(), ".jpg")
 		return &Image{
-			Id:        atoi(idStr),
+			ID:        atoi(idStr),
 			Filename:  f.Name(),
 			CreatedAt: f.ModTime(),
 			UpdatedAt: f.ModTime(),
@@ -42,9 +42,10 @@ func latestImages() Images {
 	return Images{Type: "array", Image: images}
 }
 
+// Image represents the data for an image
 type Image struct {
 	XMLName   xml.Name  `xml:"image" json:"-"`
-	Id        int       `xml:"id" json:"id"`
+	ID        int       `xml:"id" json:"id"`
 	Filename  string    `xml:"filename" json:"filename"`
 	CreatedAt time.Time `xml:"created-at" json:"created_at"`
 	UpdatedAt time.Time `xml:"updated-at" json:"updated_at"`
@@ -52,6 +53,7 @@ type Image struct {
 	URL       string    `xml:"url"`
 }
 
+// Images represent a list of images
 type Images struct {
 	XMLName xml.Name `xml:"images" json:"-"`
 	Type    string   `xml:"type,attr" json:"-"`
@@ -61,7 +63,7 @@ type Images struct {
 type fileStatsHandler func(os.FileInfo) *Image
 
 func handleFileStats(yield fileStatsHandler) []*Image {
-	allFileNames, _ := filepath.Glob(UPLOAD_DIR + "/*.jpg")
+	allFileNames, _ := filepath.Glob(UploadDir + "/*.jpg")
 
 	fileNames := []string{}
 

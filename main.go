@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+	"os"
+)
 
 func main() {
 	setup()
@@ -11,7 +14,17 @@ func main() {
 
 	http.Handle("/uploaded_images/",
 		http.StripPrefix("/uploaded_images/",
-			http.FileServer(http.Dir(UPLOAD_DIR))))
+			http.FileServer(http.Dir(UploadDir))))
 
-	fatal(http.ListenAndServe(":8080", nil))
+	port := getenv("PORT", "8080")
+
+	fatal(http.ListenAndServe(":"+port, nil))
+}
+
+func getenv(key, fallback string) string {
+	v := os.Getenv(key)
+	if v != "" {
+		return v
+	}
+	return fallback
 }

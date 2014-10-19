@@ -10,7 +10,7 @@ import (
 
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	// Parse the form data
-	if err := r.ParseMultipartForm(MAX_MEMORY); err != nil {
+	if err := r.ParseMultipartForm(MaxMemory); err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusForbidden)
 	}
@@ -40,17 +40,17 @@ func processFeatures(r *http.Request, path, timestamp string) {
 		h := original.Bounds().Max.Y
 
 		for i := 0; i < ffc; i++ {
-			l_eye_x := atoi(r.Form["features[][left_eye_x]"][i])
-			l_eye_y := atoi(r.Form["features[][left_eye_y]"][i])
-			r_eye_x := atoi(r.Form["features[][right_eye_x]"][i])
-			r_eye_y := atoi(r.Form["features[][right_eye_y]"][i])
-			mouth_x := atoi(r.Form["features[][mouth_x]"][i])
-			mouth_y := atoi(r.Form["features[][mouth_y]"][i])
+			lEyeX := atoi(r.Form["features[][left_eye_x]"][i])
+			lEyeY := atoi(r.Form["features[][left_eye_y]"][i])
+			rEyeX := atoi(r.Form["features[][right_eye_x]"][i])
+			rEyeY := atoi(r.Form["features[][right_eye_y]"][i])
+			mouthX := atoi(r.Form["features[][mouth_x]"][i])
+			mouthY := atoi(r.Form["features[][mouth_y]"][i])
 
 			features = append(features, Feature{
-				image.Point{l_eye_x, h - l_eye_y},
-				image.Point{r_eye_x, h - r_eye_y},
-				image.Point{mouth_x, h - mouth_y},
+				image.Point{lEyeX, h - lEyeY},
+				image.Point{rEyeX, h - rEyeY},
+				image.Point{mouthX, h - mouthY},
 			})
 		}
 
@@ -63,10 +63,10 @@ func processFeatures(r *http.Request, path, timestamp string) {
 	saveResizedImage(preparedImage, "thumb-", timestamp, 0, 200)
 }
 
-func writeUploadedFile(r *http.Request, image_path string) {
+func writeUploadedFile(r *http.Request, imagePath string) {
 	file, _, _ := r.FormFile("uploaded")
 	defer file.Close()
 
 	buf, _ := ioutil.ReadAll(file)
-	ioutil.WriteFile(image_path, buf, os.ModePerm)
+	ioutil.WriteFile(imagePath, buf, os.ModePerm)
 }

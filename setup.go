@@ -1,38 +1,42 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
 	"image"
 	"os"
-	"runtime"
+
+	"github.com/joho/godotenv"
 )
 
 const (
-	// 1MB Upload buffer
-	MAX_MEMORY = 1 * 1024 * 1024
+	// MaxMemory defines a 1 MB Upload buffer
+	MaxMemory = 1 * 1024 * 1024
 )
 
 var (
-	UPLOAD_DIR string
-	BASE_URL   string
-	SANTA_HAT  image.Image
-	DEBUG      bool
+	// UploadDir is the upload directory
+	UploadDir string
+
+	// BaseURL contains the Tomtelizer base URL
+	BaseURL string
+
+	// SantaHat contains the image of the santa hat
+	SantaHat image.Image
+
+	// Debug flag
+	Debug bool
 )
 
 func setup() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-	puts("Available CPUs:", runtime.NumCPU())
-
 	err := godotenv.Load()
 	if err != nil {
 		fatal("Error loading .env file")
 	}
 
 	// Debug mode
-	DEBUG = os.Getenv("TOMTELIZER_DEBUG") == "true"
-	puts("DEBUG:", DEBUG)
+	Debug = os.Getenv("TOMTELIZER_DEBUG") == "true"
+	puts("Debug:", Debug)
 
-	UPLOAD_DIR = os.Getenv("TOMTELIZER_UPLOAD_DIR")
-	BASE_URL = os.Getenv("TOMTELIZER_BASE_URL")
-	SANTA_HAT = loadImage(os.Getenv("TOMTELIZER_SANTA_HAT"))
+	UploadDir = os.Getenv("TOMTELIZER_UPLOAD_DIR")
+	BaseURL = os.Getenv("TOMTELIZER_BASE_URL")
+	SantaHat = loadImage(os.Getenv("TOMTELIZER_SANTA_HAT"))
 }

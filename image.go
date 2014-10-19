@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/nfnt/resize"
 	"image"
 	"image/jpeg"
 	_ "image/png"
 	"os"
+
+	"github.com/nfnt/resize"
 )
 
 func saveResizedImage(img image.Image, version, timestamp string, x, y int) {
@@ -24,7 +25,7 @@ func saveImage(img image.Image, version, timestamp string) {
 }
 
 func imageFileName(version, timestamp string) string {
-	return fmt.Sprintf("%s/%s%s.jpg", UPLOAD_DIR, version, timestamp)
+	return fmt.Sprintf("%s/%s%s.jpg", UploadDir, version, timestamp)
 }
 
 func loadAndResizeImage(fn string, x, y int) image.Image {

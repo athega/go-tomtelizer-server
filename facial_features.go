@@ -7,6 +7,8 @@ import (
 	"math"
 )
 
+// Feature reprecent a set of facial features
+// (the points of the eyes and the mount)
 type Feature struct {
 	LeftEye  image.Point
 	RightEye image.Point
@@ -30,7 +32,7 @@ func handleFacialFeatures(features []Feature,
 		for _, f := range features {
 			hatRect := calculateHatRect(f)
 
-			if DEBUG {
+			if Debug {
 				red := color.RGBA{255, 0, 0, 255}
 				green := color.RGBA{0, 255, 0, 255}
 				blue := color.RGBA{0, 0, 255, 255}
@@ -42,7 +44,7 @@ func handleFacialFeatures(features []Feature,
 				square(m, f.RightEye, 4, blue)
 			} else {
 				// Load the santa hat
-				santa := resizeImage(SANTA_HAT, hatRect.Size().X, hatRect.Size().Y)
+				santa := resizeImage(SantaHat, hatRect.Size().X, hatRect.Size().Y)
 				draw.Draw(m, hatRect, santa, image.ZP, draw.Over)
 			}
 		}
