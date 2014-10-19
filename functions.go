@@ -11,11 +11,11 @@ func timestampString() string {
 }
 
 func puts(a ...interface{}) {
-	log.Println(a)
+	log.Println(a...)
 }
 
 func fatal(a ...interface{}) {
-	log.Fatal(a)
+	log.Fatal(a...)
 }
 
 func atoi(s string) (n int) {
